@@ -10,7 +10,8 @@ namespace CsvHelper.Excel.Specs.Parser
         {
             var csvConfiguration = new CsvConfiguration(CultureInfo.InvariantCulture)
             {
-                ShouldSkipRecord = record => record.Record.All(string.IsNullOrEmpty)
+                IgnoreBlankLines = true,
+                
             };
             using var parser = new ExcelParser(Path, null, csvConfiguration);
             Run(parser);
