@@ -106,7 +106,7 @@ namespace CsvHelper.Excel
         /// <param name="configuration">The configuration.</param>
         public ExcelParser(Stream stream, string sheetName, CsvConfiguration configuration, bool leaveOpen = false)
         {
-            var workbook = new XLWorkbook(stream, XLEventTracking.Disabled);
+            var workbook = new XLWorkbook(stream);
 
             _worksheet = string.IsNullOrEmpty(sheetName) ? workbook.Worksheet(1) : workbook.Worksheet(sheetName);
 

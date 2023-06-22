@@ -101,7 +101,7 @@ namespace CsvHelper.Excel
             configuration, leaveOpen)
         {
             configuration.Validate();
-            _worksheet = new XLWorkbook(XLEventTracking.Disabled).AddWorksheet(sheetName);
+            _worksheet = new XLWorkbook().AddWorksheet(sheetName);
             this._stream = stream;
 
             _leaveOpen = leaveOpen;
