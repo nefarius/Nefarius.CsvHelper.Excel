@@ -1,18 +1,19 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Description>An implementation of ICsvParser and ICsvSerializer from CsvHelper that reads and writes using the ClosedXml library.</Description>
+    <Description>An implementation of ICsvParser and ICsvSerializer from CsvHelper that reads and writes using the ClosedXml library. Forked from youngcm2/CsvHelper.Excel - Updated to ClosedXML > 0.101.0 and CsvHelper > 30.0.1</Description>
     <AssemblyTitle>CsvHelper for Excel</AssemblyTitle>
-    <VersionPrefix>27.2.1</VersionPrefix>    
-    <Authors>Chris Young</Authors>
+    <VersionPrefix>30.0.1</VersionPrefix>    
+    <Authors>Joost Meulenkamp, Chris Young</Authors>
     <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
     <DebugType>portable</DebugType>
     <AssemblyName>CsvHelper.Excel</AssemblyName>
     <OutputType>Library</OutputType>
     <PackageId>CsvHelper.Excel.Core</PackageId>
     <PackageTags>CSV;CSVHelper;Excel;ClosedXML</PackageTags>
-    <PackageProjectUrl>https://github.com/youngcm2/CsvHelper.Excel</PackageProjectUrl>
-    <PackageLicenseUrl>https://github.com/youngcm2/CsvHelper.Excel/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/hurles/CsvHelper.Excel</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/hurles/CsvHelper.Excel/blob/main/LICENSE</PackageLicenseUrl>
     <PackageOutputPath>./nupkg</PackageOutputPath>
+    <Version>30.0.1</Version>
   </PropertyGroup> 
   <ItemGroup>
     <PackageReference Include="ClosedXML" Version="0.101.0" />
