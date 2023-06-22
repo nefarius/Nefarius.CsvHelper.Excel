@@ -96,19 +96,6 @@ namespace CsvHelper.Excel.Specs.Parser
             Results = await records.ToArrayAsync();
         }
 
-        private bool ShouldSkipRecord(ShouldSkipRecordArgs args)
-        {
-            
-            
-            for (int i = 0; i < args.Row.ColumnCount; i++)
-            {
-                if (!string.IsNullOrEmpty(args.Row[i]))
-                    return false;
-            }
-
-            return true;
-        }
-
         [Fact]
         public async void TheResultsAreNotNull()
         {
