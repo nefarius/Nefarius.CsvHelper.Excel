@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26228.4
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CsvHelper.Excel", "CsvHelper.Excel/CsvHelper.Excel.csproj", "{EB6C9136-F0B2-4280-9FBF-3AE80A95823D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CsvHelper.Excel", "src/CsvHelper.Excel/CsvHelper.Excel.csproj", "{EB6C9136-F0B2-4280-9FBF-3AE80A95823D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CsvHelper.Excel.Specs", "CsvHelper.Excel.Specs\CsvHelper.Excel.Specs.csproj", "{2E8E6EFC-EF9D-4A0F-A1F4-4317E953728B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CsvHelper.Excel.Specs", "src/CsvHelper.Excel.Specs\CsvHelper.Excel.Specs.csproj", "{2E8E6EFC-EF9D-4A0F-A1F4-4317E953728B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
