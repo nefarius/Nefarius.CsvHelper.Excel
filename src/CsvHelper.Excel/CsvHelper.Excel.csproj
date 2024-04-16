@@ -15,7 +15,7 @@
     <PackageOutputPath>./nupkg</PackageOutputPath>
   </PropertyGroup> 
   <ItemGroup>
-    <PackageReference Include="ClosedXML" Version="0.101.0" />
-    <PackageReference Include="CsvHelper" Version="30.0.1" />
+    <PackageReference Include="ClosedXML" Version="0.102.2" />
+    <PackageReference Include="CsvHelper" Version="31.0.3" />
   </ItemGroup>
 </Project>
