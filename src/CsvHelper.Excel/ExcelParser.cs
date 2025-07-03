@@ -110,6 +110,7 @@ public class ExcelParser : IParser
     /// <param name="stream">The stream.</param>
     /// <param name="sheetName">The sheet name</param>
     /// <param name="configuration">The configuration.</param>
+    /// <param name="leaveOpen">Whether to leave the stream open when done or dispose it.</param>
     public ExcelParser(Stream stream, string sheetName, CsvConfiguration configuration, bool leaveOpen = false)
     {
         XLWorkbook workbook = new(stream);
@@ -131,7 +132,6 @@ public class ExcelParser : IParser
         Context = new CsvContext(this);
         _leaveOpen = leaveOpen;
     }
-
 
     /// <inheritdoc />
     public void Dispose()
@@ -181,9 +181,12 @@ public class ExcelParser : IParser
     public int RawRow { get; private set; } = 1;
 
     public string Delimiter => Configuration.Delimiter;
+    
     public CsvContext Context { get; }
+    
     public IParserConfiguration Configuration { get; }
 
+    /// <inheritdoc cref="IDisposable.Dispose"/>
     protected virtual void Dispose(bool disposing)
     {
         if (_disposed)
