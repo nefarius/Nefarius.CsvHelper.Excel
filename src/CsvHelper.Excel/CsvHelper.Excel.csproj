@@ -5,9 +5,12 @@
         <VersionPrefix>30.0.1</VersionPrefix>
         <Authors>Joost Meulenkamp, Chris Young, hurles, Nefarius</Authors>
         <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
-        <AssemblyName>Nefarius.CsvHelper.Excel</AssemblyName>
         <OutputType>Library</OutputType>
+        
         <PackageId>Nefarius.CsvHelper.Excel</PackageId>
+        <AssemblyName>Nefarius.CsvHelper.Excel</AssemblyName>
+        <RootNamespace>Nefarius.CsvHelper.Excel</RootNamespace>
+        
         <PackageTags>CSV;CSVHelper;Excel;ClosedXML</PackageTags>
         <PackageProjectUrl>https://github.com/nefarius/Nefarius.CsvHelper.Excel</PackageProjectUrl>
         <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>

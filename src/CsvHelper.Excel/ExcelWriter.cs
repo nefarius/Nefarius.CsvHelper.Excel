@@ -3,12 +3,13 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using ClosedXML.Excel;
+using CsvHelper;
 using CsvHelper.Configuration;
 
 #pragma warning disable 649
 #pragma warning disable 169
 
-namespace CsvHelper.Excel
+namespace Nefarius.CsvHelper.Excel
 {
     /// <summary>
     /// Used to write CSV files.
@@ -24,7 +25,10 @@ namespace CsvHelper.Excel
         private readonly IXLWorksheet _worksheet;
         private readonly Stream _stream;
 
+        /// <inheritdoc />
         public override int Index => _index;
+
+        /// <inheritdoc />
         public override int Row => _row;
 
         /// <summary>

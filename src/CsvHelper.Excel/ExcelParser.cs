@@ -1,13 +1,14 @@
+using System;
 using System.Globalization;
 using System.IO;
-using System.Threading.Tasks;
-using System;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using ClosedXML.Excel;
+using CsvHelper;
 using CsvHelper.Configuration;
 
-namespace CsvHelper.Excel
+namespace Nefarius.CsvHelper.Excel
 {
     /// <summary>
     /// Parses an Excel file.
