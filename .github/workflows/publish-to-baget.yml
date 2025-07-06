@@ -1,4 +1,4 @@
-name: Publish Nuget Package
+name: Publish to Baget
 
 on:
   push:
@@ -18,10 +18,6 @@ jobs:
         with:
           dotnet-version: 9.x
 
-      - name: Modify README.md for NuGet
-        run: |
-          sed -i 's/# <img[^>]*>/# /' README.md
-
       - name: Build
         run: dotnet build -c Release
 
@@ -29,6 +25,6 @@ jobs:
         run: dotnet pack -c Release
 
       - name: Publish To Nuget
-        run: dotnet nuget push bin/*.nupkg -k $NUGET_AUTH_TOKEN -s https://api.nuget.org/v3/index.json
+        run: dotnet nuget push bin/*.nupkg -k $NUGET_AUTH_TOKEN -s https://baget.nefarius.at/v3/index.json
         env:
-          NUGET_AUTH_TOKEN: ${{ secrets.NUGET_API_KEY }}
+          NUGET_AUTH_TOKEN: ${{ secrets.BAGET_API_KEY }}
