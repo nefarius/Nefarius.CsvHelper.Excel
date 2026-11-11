@@ -4,15 +4,17 @@
 ![Requirements](https://img.shields.io/badge/Requires-.NET%20Standard%202.0%20%7C%202.1-blue.svg)
 [![NuGet](https://img.shields.io/nuget/v/Nefarius.CsvHelper.Excel)](https://www.nuget.org/packages/Nefarius.CsvHelper.Excel/)
 [![NuGet downloads](https://img.shields.io/nuget/dt/Nefarius.CsvHelper.Excel)](https://www.nuget.org/packages/Nefarius.CsvHelper.Excel/)
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/nefarius/Nefarius.CsvHelper.Excel/blob/master/LICENSE)
 
 Read and write Excel workbooks with [CsvHelper](https://github.com/JoshClose/CsvHelper) record mapping and [ClosedXML](https://github.com/ClosedXML/ClosedXML).
 
-[NuGet package](https://www.nuget.org/packages/Nefarius.CsvHelper.Excel/) · [Source](https://github.com/nefarius/Nefarius.CsvHelper.Excel) · [API documentation](docs/index.md)
+[NuGet package](https://www.nuget.org/packages/Nefarius.CsvHelper.Excel/) · [Source](https://github.com/nefarius/Nefarius.CsvHelper.Excel) · [API documentation](https://github.com/nefarius/Nefarius.CsvHelper.Excel/blob/master/docs/index.md)
 
 ```powershell
 dotnet add package Nefarius.CsvHelper.Excel
 ```
+
+The examples require version 34. That version has not been published yet, so this command currently installs version 33.
 
 The package continues to target **.NET Standard 2.0 and 2.1**. Building the repository requires the .NET 10 SDK; running all tests also requires the .NET 8 runtime.
 
