@@ -1,6 +1,18 @@
-# CsvHelper for Excel
+# <img src="assets/NSS-128x128.png" align="left" />Nefarius.CsvHelper.Excel
+
+[![Build](https://github.com/nefarius/Nefarius.CsvHelper.Excel/actions/workflows/build.yml/badge.svg)](https://github.com/nefarius/Nefarius.CsvHelper.Excel/actions/workflows/build.yml)
+![Requirements](https://img.shields.io/badge/Requires-.NET%20Standard%202.0%20%7C%202.1-blue.svg)
+[![NuGet](https://img.shields.io/nuget/v/Nefarius.CsvHelper.Excel)](https://www.nuget.org/packages/Nefarius.CsvHelper.Excel/)
+[![NuGet downloads](https://img.shields.io/nuget/dt/Nefarius.CsvHelper.Excel)](https://www.nuget.org/packages/Nefarius.CsvHelper.Excel/)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 
 Read and write Excel workbooks with [CsvHelper](https://github.com/JoshClose/CsvHelper) record mapping and [ClosedXML](https://github.com/ClosedXML/ClosedXML).
+
+[NuGet package](https://www.nuget.org/packages/Nefarius.CsvHelper.Excel/) · [Source](https://github.com/nefarius/Nefarius.CsvHelper.Excel) · [API documentation](docs/index.md)
+
+```powershell
+dotnet add package Nefarius.CsvHelper.Excel
+```
 
 The package continues to target **.NET Standard 2.0 and 2.1**. Building the repository requires the .NET 10 SDK; running all tests also requires the .NET 8 runtime.
 
@@ -110,3 +122,15 @@ Restore and run the pinned documentation tool with:
 dotnet tool restore
 dotnet tool run xmldoc2md ./bin/CsvHelper.Excel/Release/netstandard2.0/Nefarius.CsvHelper.Excel.dll ./docs/
 ```
+
+## Sources & 3rd party credits
+
+This library benefits from these awesome projects ❤ (appearance in no special order):
+
+- [CsvHelper.Excel](https://github.com/hurles/CsvHelper.Excel) by Chris Young, continued by hurles, Joost Meulenkamp, and other contributors
+- [CsvHelper](https://github.com/JoshClose/CsvHelper)
+- [ClosedXML](https://github.com/ClosedXML/ClosedXML)
+
+## Credits
+
+- This package continues the Apache-2.0-licensed [CsvHelper.Excel](https://github.com/hurles/CsvHelper.Excel) project. Its current release brings that work to CsvHelper 34 and ClosedXML 0.105.
