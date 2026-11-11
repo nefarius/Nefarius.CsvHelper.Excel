@@ -114,7 +114,7 @@ dotnet pack src/CsvHelper.Excel/CsvHelper.Excel.csproj -c Release -p:GeneratePac
 
 CI tests both library assets on .NET 8 and .NET 10, on Windows and Linux, and packs the library only after those tests pass. Dependabot checks NuGet packages, the local documentation tool, and GitHub Actions weekly.
 
-Push a `v`-prefixed version tag to release. `publish-to-nuget.yml` runs the same validation workflow and publishes its package artifact using NuGet trusted publishing for account `Nefarius`. Its NuGet.org policy must match repository owner `nefarius`, repository `Nefarius.CsvHelper.Excel`, and workflow `publish-to-nuget.yml`, without an environment restriction. No stored `NUGET_API_KEY` is used. The separate BaGet workflow retains its `BAGET_API_KEY` secret.
+Push a `v`-prefixed version tag to release. `publish-to-nuget.yml` runs the same validation workflow and publishes its package artifact using NuGet trusted publishing for account `Nefarius`. Its NuGet.org policy must match repository owner `nefarius`, repository `Nefarius.CsvHelper.Excel`, and workflow `publish-to-nuget.yml`, without an environment restriction. No stored `NUGET_API_KEY` is used.
 
 Restore and run the pinned documentation tool with:
 
