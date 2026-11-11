@@ -47,6 +47,8 @@ Both file and stream constructors own their input by default. Pass `leaveOpen: t
 
 CsvHelper 34 validates generated mappings eagerly. For worksheets that may be completely empty, call `parser.Reader.ReadHeader()` and check `parser.Reader.Headers.Count` before requesting typed records.
 
+To bound conversion work and CSV buffering for sparse sheets, the rectangle from A1 to the last used row and column must contain at most 1,000,000 fields. Larger rectangles throw `InvalidDataException` before conversion.
+
 ## Writing
 
 Use `ExcelWriter.Writer` to access CsvHelper's writer. Disposing the owner saves the workbook; flushing or disposing the inner `Writer` alone does not save it.
@@ -58,7 +60,7 @@ using (var excel = new ExcelWriter("people.xlsx", "People"))
 }
 ```
 
-The path constructors overwrite existing files. To keep an output stream open:
+The path constructors validate worksheet names and writer options before overwriting existing files. To keep an output stream open:
 
 ```csharp
 using var stream = new MemoryStream();

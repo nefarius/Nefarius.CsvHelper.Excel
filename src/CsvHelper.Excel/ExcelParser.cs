@@ -10,6 +10,7 @@ namespace Nefarius.CsvHelper.Excel;
 /// <remarks>Use <see cref="Reader"/> for record mapping and enumeration. The worksheet is buffered as CSV in memory. Dispose this owner after reading.</remarks>
 public sealed class ExcelParser : IDisposable
 {
+    private const long MaximumWorksheetFields = 1_000_000;
     private readonly Stream _source;
     private readonly bool _leaveOpen;
     private readonly MemoryStream _csv = new();
@@ -57,12 +58,25 @@ public sealed class ExcelParser : IDisposable
                 var worksheet = string.IsNullOrEmpty(sheetName) ? workbook.Worksheet(1) : workbook.Worksheet(sheetName);
                 var lastRow = worksheet.LastRowUsed()?.RowNumber() ?? 0;
                 var lastColumn = worksheet.LastColumnUsed()?.ColumnNumber() ?? 0;
+                if ((long)lastRow * lastColumn > MaximumWorksheetFields)
+                {
+                    throw new InvalidDataException($"The worksheet rectangle exceeds the conversion limit of {MaximumWorksheetFields:N0} fields.");
+                }
+                var provider = options.FormatProvider ?? CultureInfo.InvariantCulture;
+                // ClosedXML accepts only CultureInfo. Retain non-culture providers' format objects.
+                var culture = provider as CultureInfo;
+                if (culture == null)
+                {
+                    culture = (CultureInfo)CultureInfo.InvariantCulture.Clone();
+                    culture.NumberFormat = NumberFormatInfo.GetInstance(provider);
+                    culture.DateTimeFormat = DateTimeFormatInfo.GetInstance(provider);
+                }
                 using var writer = CsvWriter.Create(_csv, CsvWriterOptions.Default, leaveOpen: true);
                 for (var row = 1; row <= lastRow; row++)
                 {
                     for (var column = 1; column <= lastColumn; column++)
                     {
-                        writer.WriteField(worksheet.Cell(row, column).Value.ToString(options.FormatProvider as CultureInfo ?? CultureInfo.InvariantCulture));
+                        writer.WriteField(worksheet.Cell(row, column).Value.ToString(culture));
                     }
                     writer.EndRecord();
                 }

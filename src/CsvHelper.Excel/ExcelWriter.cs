@@ -35,7 +35,7 @@ public sealed class ExcelWriter : IDisposable, IAsyncDisposable
 
     /// <summary>Creates or overwrites a file using CsvHelper writer options.</summary>
     public ExcelWriter(string path, string sheetName, CsvWriterOptions options)
-        : this(File.Create(path), sheetName, options, false) { }
+        : this(CreateFile(path, sheetName, options), sheetName, options, false) { }
 
     /// <summary>Writes to a stream using the specified culture. Set leaveOpen to retain stream ownership.</summary>
     public ExcelWriter(Stream stream, CultureInfo culture, bool leaveOpen = false)
@@ -54,15 +54,7 @@ public sealed class ExcelWriter : IDisposable, IAsyncDisposable
         _leaveOpen = leaveOpen;
         try
         {
-            // Validate the worksheet name before accepting records.
-            using var workbook = new XLWorkbook();
-            workbook.AddWorksheet(sheetName);
-            Writer = CsvWriter.Create(_csv, CsvOptions.Configure((options ?? CsvWriterOptions.Default) with { },
-                (nameof(CsvWriterOptions.Mode), CsvMode.Rfc4180),
-                (nameof(CsvWriterOptions.Separator), ','),
-                (nameof(CsvWriterOptions.Escape), '\\'),
-                (nameof(CsvWriterOptions.NewLine), "\r\n"),
-                (nameof(CsvWriterOptions.CommentPrefix), null)), leaveOpen: true);
+            Writer = CreateWriter(_csv, sheetName, options);
         }
         catch
         {
@@ -70,6 +62,25 @@ public sealed class ExcelWriter : IDisposable, IAsyncDisposable
             if (!leaveOpen) stream.Dispose();
             throw;
         }
+    }
+
+    private static Stream CreateFile(string path, string sheetName, CsvWriterOptions options)
+    {
+        // Run the same ClosedXML and CsvHelper checks before creating or truncating a file.
+        using (CreateWriter(Stream.Null, sheetName, options)) { }
+        return File.Create(path);
+    }
+
+    private static CsvWriter CreateWriter(Stream csv, string sheetName, CsvWriterOptions options)
+    {
+        using var workbook = new XLWorkbook();
+        workbook.AddWorksheet(sheetName);
+        return CsvWriter.Create(csv, CsvOptions.Configure((options ?? CsvWriterOptions.Default) with { },
+            (nameof(CsvWriterOptions.Mode), CsvMode.Rfc4180),
+            (nameof(CsvWriterOptions.Separator), ','),
+            (nameof(CsvWriterOptions.Escape), '\\'),
+            (nameof(CsvWriterOptions.NewLine), "\r\n"),
+            (nameof(CsvWriterOptions.CommentPrefix), null)), leaveOpen: true);
     }
 
     private void SaveWorkbook()
