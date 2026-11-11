@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Linq;
 using ClosedXML.Excel;
@@ -50,11 +50,11 @@ namespace CsvHelper.Excel.Specs.Parser
 
         protected void Run(ExcelParser parser)
         {
-            using var reader = new CsvReader(parser);
+            using var reader = parser.Reader;
 
-            reader.Context.AutoMap<Person>();
-            var records = reader.GetRecords<Person>();
-            Results = records.ToArray();
+            // CsvHelper 34 validates mappings eagerly, so check for a header first.
+            reader.ReadHeader();
+            Results = reader.Headers.Count > 0 ? reader.GetRecords<Person>().ToArray() : Array.Empty<Person>();
         }
 
         [Fact]

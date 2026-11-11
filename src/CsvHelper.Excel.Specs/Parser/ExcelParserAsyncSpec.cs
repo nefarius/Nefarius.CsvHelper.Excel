@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using ClosedXML.Excel;
-using CsvHelper.Configuration;
+using CsvHelper;
 using CsvHelper.Excel.Specs.Common;
 using FluentAssertions;
 using Xunit;
@@ -82,43 +82,48 @@ namespace CsvHelper.Excel.Specs.Parser
 
         protected async Task RunAsync()
         {
-            var csvConfiguration = new CsvConfiguration(CultureInfo.InvariantCulture)
+            var csvConfiguration = new CsvReaderOptions
             {
-                ShouldSkipRecord = x => x.Row.Parser.Record?.All(field => string.IsNullOrWhiteSpace(field)) ?? false
+                FormatProvider = CultureInfo.InvariantCulture,
+                ShouldSkipRecord = x => x.ToArray().All(string.IsNullOrWhiteSpace)
             };
             using var parser = new ExcelParser(Path, WorksheetName, csvConfiguration);
-            using var reader = new CsvReader(parser);
-
-            reader.Context.AutoMap<Person>();
+            using var reader = parser.Reader;
 
             var records = reader.GetRecordsAsync<Person>();
             
-            Results = await records.ToArrayAsync();
+            var results = new List<Person>();
+            await foreach (var record in records)
+            {
+                results.Add(record);
+            }
+            Results = results.ToArray();
         }
 
         [Fact]
-        public async void TheResultsAreNotNull()
+        public async Task TheResultsAreNotNull()
         {
             await RunAsync();
             Results.Should().NotBeNull();
         }
 
         [Fact]
-        public async void TheResultsAreCorrect()
+        public async Task TheResultsAreCorrect()
         {
             await RunAsync();
             Values.Should().BeEquivalentTo(Results, options => options.IncludingProperties());
         }
 
         [Fact]
-        public async void RowsHaveData()
+        public async Task RowsHaveData()
         {
-            var csvConfiguration = new CsvConfiguration(CultureInfo.InvariantCulture)
+            var csvConfiguration = new CsvReaderOptions
             {
-                ShouldSkipRecord = x => x.Row.Parser.Record?.All(field => string.IsNullOrWhiteSpace(field)) ?? false
+                FormatProvider = CultureInfo.InvariantCulture,
+                ShouldSkipRecord = x => x.ToArray().All(string.IsNullOrWhiteSpace)
             };
             using var parser = new ExcelParser(Path, WorksheetName, csvConfiguration );
-            using var reader = new CsvReader(parser);
+            using var reader = parser.Reader;
 
             while (await reader.ReadAsync())
             {

@@ -1,6 +1,6 @@
 using System.Globalization;
 using System.Linq;
-using CsvHelper.Configuration;
+using CsvHelper;
 
 namespace CsvHelper.Excel.Specs.Parser
 {
@@ -8,9 +8,10 @@ namespace CsvHelper.Excel.Specs.Parser
     {
         public ParseUsingPathSpecWithBlankRow() : base("parse_by_path_with_blank_row", includeBlankRow: true)
         {
-            var csvConfiguration = new CsvConfiguration(CultureInfo.InvariantCulture)
+            var csvConfiguration = new CsvReaderOptions
             {
-                ShouldSkipRecord = x => x.Row.Parser.Record?.All(field => string.IsNullOrWhiteSpace(field)) ?? false
+                FormatProvider = CultureInfo.InvariantCulture,
+                ShouldSkipRecord = x => x.ToArray().All(string.IsNullOrWhiteSpace)
             };
             using var parser = new ExcelParser(Path, null, csvConfiguration);
             Run(parser);

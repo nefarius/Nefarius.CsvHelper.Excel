@@ -1,236 +1,144 @@
+using System;
 using System.Globalization;
 using System.IO;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-
 using ClosedXML.Excel;
-
 using CsvHelper;
-using CsvHelper.Configuration;
-
-#pragma warning disable 649
-#pragma warning disable 169
 
 namespace Nefarius.CsvHelper.Excel;
 
-/// <summary>
-///     Used to write CSV files.
-/// </summary>
-public class ExcelWriter : CsvWriter
+/// <summary>Writes CsvHelper records into an Excel workbook when disposed.</summary>
+/// <remarks>Use <see cref="Writer"/> to write records. Intermediate CSV is buffered in memory until disposal.</remarks>
+public sealed class ExcelWriter : IDisposable, IAsyncDisposable
 {
+    private readonly Stream _destination;
     private readonly bool _leaveOpen;
-    private readonly bool _sanitizeForInjection;
-    private readonly Stream _stream;
-    private readonly IXLWorksheet _worksheet;
-
+    private readonly string _sheetName;
+    private readonly MemoryStream _csv = new();
     private bool _disposed;
-    private int _index = 1;
-    private int _row = 1;
 
-    /// <summary>
-    ///     Initializes a new instance of the <see cref="ExcelWriter" /> class.
-    /// </summary>
-    /// <param name="path">The path.</param>
-    public ExcelWriter(string path) : this(File.Open(path, FileMode.OpenOrCreate, FileAccess.Write), "export",
-        CultureInfo.InvariantCulture)
+    /// <summary>Gets the CsvHelper writer used to format fields and records.</summary>
+    public CsvWriter Writer { get; }
+
+    /// <summary>Creates or overwrites a file with an export worksheet.</summary>
+    public ExcelWriter(string path) : this(path, "export", CsvWriterOptions.Default) { }
+
+    /// <summary>Creates or overwrites a file using the specified culture.</summary>
+    public ExcelWriter(string path, CultureInfo culture) : this(path, "export", CsvOptions.Configure(new CsvWriterOptions(), (nameof(CsvWriterOptions.FormatProvider), culture))) { }
+
+    /// <summary>Creates or overwrites a file with a named worksheet.</summary>
+    public ExcelWriter(string path, string sheetName) : this(path, sheetName, CsvWriterOptions.Default) { }
+
+    /// <summary>Creates or overwrites a file with a named worksheet and culture.</summary>
+    public ExcelWriter(string path, string sheetName, CultureInfo culture)
+        : this(path, sheetName, CsvOptions.Configure(new CsvWriterOptions(), (nameof(CsvWriterOptions.FormatProvider), culture))) { }
+
+    /// <summary>Creates or overwrites a file using CsvHelper writer options.</summary>
+    public ExcelWriter(string path, string sheetName, CsvWriterOptions options)
+        : this(CreateFile(path, sheetName, options), sheetName, options, false) { }
+
+    /// <summary>Writes to a stream using the specified culture. Set leaveOpen to retain stream ownership.</summary>
+    public ExcelWriter(Stream stream, CultureInfo culture, bool leaveOpen = false)
+        : this(stream, "export", CsvOptions.Configure(new CsvWriterOptions(), (nameof(CsvWriterOptions.FormatProvider), culture)), leaveOpen) { }
+
+    /// <summary>Writes a named worksheet to a stream using the specified culture.</summary>
+    public ExcelWriter(Stream stream, string sheetName, CultureInfo culture, bool leaveOpen = false)
+        : this(stream, sheetName, CsvOptions.Configure(new CsvWriterOptions(), (nameof(CsvWriterOptions.FormatProvider), culture)), leaveOpen) { }
+
+    /// <summary>Writes a named worksheet to a stream using CsvHelper writer options.</summary>
+    /// <remarks>CSV dialect options are normalized for the internal transport; formatting and mapping options apply.</remarks>
+    public ExcelWriter(Stream stream, string sheetName, CsvWriterOptions options, bool leaveOpen = false)
     {
-    }
-
-    /// <summary>
-    ///     Initializes a new instance of the <see cref="ExcelWriter" /> class.
-    /// </summary>
-    /// <param name="path">The path.</param>
-    /// <param name="culture">The culture.</param>
-    public ExcelWriter(string path, CultureInfo culture) : this(
-        File.Open(path, FileMode.OpenOrCreate, FileAccess.Write), "export", culture)
-    {
-    }
-
-    /// <summary>
-    ///     Initializes a new instance of the <see cref="ExcelWriter" /> class.
-    /// </summary>
-    /// <param name="path">The path.</param>
-    /// <param name="sheetName">The sheet name</param>
-    public ExcelWriter(string path, string sheetName) : this(
-        File.Open(path, FileMode.OpenOrCreate, FileAccess.Write), sheetName, CultureInfo.InvariantCulture)
-    {
-    }
-
-    /// <summary>
-    ///     Initializes a new instance of the <see cref="ExcelWriter" /> class.
-    /// </summary>
-    /// <param name="path">The path.</param>
-    /// <param name="sheetName">The sheet name</param>
-    /// <param name="culture">The culture.</param>
-    public ExcelWriter(string path, string sheetName, CultureInfo culture) : this(
-        File.Open(path, FileMode.OpenOrCreate, FileAccess.Write), sheetName, culture)
-    {
-    }
-
-    /// <summary>
-    ///     Initializes a new instance of the <see cref="ExcelWriter" /> class.
-    /// </summary>
-    /// <param name="stream">The stream.</param>
-    /// <param name="culture">The culture.</param>
-    /// <param name="leaveOpen">
-    ///     <c>true</c> to leave the <see cref="TextWriter" /> open after the <see cref="ExcelWriter" />
-    ///     object is disposed, otherwise <c>false</c>.
-    /// </param>
-    public ExcelWriter(Stream stream, CultureInfo culture, bool leaveOpen = false) : this(stream, "export", culture,
-        leaveOpen)
-    {
-    }
-
-    /// <summary>
-    ///     Initializes a new instance of the <see cref="ExcelWriter" /> class.
-    /// </summary>
-    /// <param name="stream">The stream.</param>
-    /// <param name="sheetName">The sheet name</param>
-    /// <param name="culture">The culture.</param>
-    /// <param name="leaveOpen">
-    ///     <c>true</c> to leave the <see cref="TextWriter" /> open after the <see cref="ExcelWriter" />
-    ///     object is disposed, otherwise <c>false</c>.
-    /// </param>
-    public ExcelWriter(Stream stream, string sheetName, CultureInfo culture, bool leaveOpen = false) : this(stream,
-        sheetName, new CsvConfiguration(culture), leaveOpen)
-    {
-    }
-
-    /// <summary>
-    ///     Initializes a new instance of the <see cref="ExcelWriter" /> class.
-    /// </summary>
-    /// <param name="stream">The stream.</param>
-    /// <param name="sheetName">The sheet name</param>
-    /// <param name="configuration">The configuration.</param>
-    private ExcelWriter(Stream stream, string sheetName, CsvConfiguration configuration, bool leaveOpen = false) : base(
-        TextWriter.Null,
-        configuration, leaveOpen)
-    {
-        configuration.Validate();
-        _worksheet = new XLWorkbook().AddWorksheet(sheetName);
-        _stream = stream;
-
+        _destination = stream ?? throw new ArgumentNullException(nameof(stream));
+        _sheetName = sheetName;
         _leaveOpen = leaveOpen;
-        _sanitizeForInjection = configuration.InjectionOptions == InjectionOptions.Escape;
-    }
-
-    /// <inheritdoc />
-    public override int Index => _index;
-
-    /// <inheritdoc />
-    public override int Row => _row;
-
-
-    /// <inheritdoc />
-    public override void WriteField(string field, bool shouldQuote)
-    {
-        if (_sanitizeForInjection)
+        try
         {
-            field = SanitizeForInjection(field);
+            Writer = CreateWriter(_csv, sheetName, options);
         }
-
-        WriteToCell(field);
-        _index++;
-    }
-
-    /// <inheritdoc />
-    public override void NextRecord()
-    {
-        Flush();
-        _index = 1;
-        _row++;
-    }
-
-    /// <inheritdoc />
-    public override async Task NextRecordAsync()
-    {
-        await FlushAsync();
-        _index = 1;
-        _row++;
-    }
-
-    /// <inheritdoc />
-    public override void Flush()
-    {
-        _stream.Flush();
-    }
-
-    /// <inheritdoc />
-    public override Task FlushAsync()
-    {
-        return _stream.FlushAsync();
-    }
-
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private void WriteToCell(string value)
-    {
-        int length = value?.Length ?? 0;
-
-        if (value == null || length == 0)
+        catch
         {
-            return;
+            _csv.Dispose();
+            if (!leaveOpen) stream.Dispose();
+            throw;
         }
-
-        _worksheet.Worksheet.AsRange().Cell(_row, _index).Value = value;
     }
 
-    /// <inheritdoc />
-    protected override void Dispose(bool disposing)
+    private static Stream CreateFile(string path, string sheetName, CsvWriterOptions options)
     {
-        if (_disposed)
-        {
-            return;
-        }
+        // Run the same ClosedXML and CsvHelper checks before creating or truncating a file.
+        using (CreateWriter(Stream.Null, sheetName, options)) { }
+        return File.Create(path);
+    }
 
-        Flush();
-        _worksheet.Workbook.SaveAs(_stream);
-        _stream.Flush();
+    private static CsvWriter CreateWriter(Stream csv, string sheetName, CsvWriterOptions options)
+    {
+        using var workbook = new XLWorkbook();
+        workbook.AddWorksheet(sheetName);
+        return CsvWriter.Create(csv, CsvOptions.Configure((options ?? CsvWriterOptions.Default) with { },
+            (nameof(CsvWriterOptions.Mode), CsvMode.Rfc4180),
+            (nameof(CsvWriterOptions.Separator), ','),
+            (nameof(CsvWriterOptions.Escape), '\\'),
+            (nameof(CsvWriterOptions.NewLine), "\r\n"),
+            (nameof(CsvWriterOptions.CommentPrefix), null)), leaveOpen: true);
+    }
 
-        if (disposing)
+    private void SaveWorkbook()
+    {
+        _csv.Position = 0;
+        using var reader = CsvReader.Create(_csv, CsvOptions.Configure(new CsvReaderOptions(),
+            (nameof(CsvReaderOptions.HasHeader), false),
+            (nameof(CsvReaderOptions.Separator), ','),
+            (nameof(CsvReaderOptions.SkipEmptyLines), false),
+            (nameof(CsvReaderOptions.TrimWhitespace), false)), leaveOpen: true);
+        using var workbook = new XLWorkbook();
+        var worksheet = workbook.AddWorksheet(_sheetName);
+        var row = 1;
+        while (reader.Read())
         {
-            // Dispose managed state (managed objects)
-            _worksheet.Workbook.Dispose();
-            if (!_leaveOpen)
+            for (var column = 0; column < reader.FieldCount; column++)
             {
-                _stream.Dispose();
+                worksheet.Cell(row, column + 1).Value = reader.GetString(column);
             }
+            row++;
         }
-
-        // Free unmanaged resources (unmanaged objects) and override finalizer
-        // Set large fields to null
-
-        _disposed = true;
+        workbook.SaveAs(_destination);
     }
 
-#if !NET45 && !NET47 && !NETSTANDARD2_0
-    /// <inheritdoc />
-    protected override async ValueTask DisposeAsync(bool disposing)
+    /// <summary>Finishes the records, saves the workbook and releases owned resources.</summary>
+    public void Dispose()
     {
-        if (_disposed)
-        {
-            return;
-        }
-
-        await FlushAsync().ConfigureAwait(false);
-        _worksheet.Workbook.SaveAs(_stream);
-        await _stream.FlushAsync().ConfigureAwait(false);
-
-        if (disposing)
-        {
-            // Dispose managed state (managed objects)
-            _worksheet.Workbook.Dispose();
-            if (!_leaveOpen)
-            {
-                await _stream.DisposeAsync().ConfigureAwait(false);
-            }
-        }
-
-        // Free unmanaged resources (unmanaged objects) and override finalizer
-        // Set large fields to null
-
-
+        if (_disposed) return;
         _disposed = true;
+        try
+        {
+            Writer.Dispose();
+            SaveWorkbook();
+            _destination.Flush();
+        }
+        finally
+        {
+            _csv.Dispose();
+            if (!_leaveOpen) _destination.Dispose();
+        }
     }
-#endif
+
+    /// <summary>Flushes the records asynchronously, saves the workbook and releases owned resources.</summary>
+    /// <remarks>ClosedXML workbook serialization is synchronous.</remarks>
+    public async ValueTask DisposeAsync()
+    {
+        if (_disposed) return;
+        _disposed = true;
+        try
+        {
+            await Writer.DisposeAsync().ConfigureAwait(false);
+            SaveWorkbook();
+            await _destination.FlushAsync().ConfigureAwait(false);
+        }
+        finally
+        {
+            _csv.Dispose();
+            if (!_leaveOpen) _destination.Dispose();
+        }
+    }
 }

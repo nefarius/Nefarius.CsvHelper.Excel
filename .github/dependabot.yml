@@ -5,3 +5,20 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    groups:
+      nuget:
+        patterns:
+          - "*"
+    ignore:
+      # Preserve support for .NET 8 consumers of the .NET Standard 2.0 asset.
+      - dependency-name: "Microsoft.Bcl.AsyncInterfaces"
+        update-types: ["version-update:semver-major"]
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    groups:
+      github-actions:
+        patterns:
+          - "*"

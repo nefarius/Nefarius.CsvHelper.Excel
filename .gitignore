@@ -9,3 +9,6 @@ project.lock.json
 /src/packages
 /src/CsvHelper.Excel.userprefs
 *.nupkg
+*.snupkg
+artifacts/
+TestResults/

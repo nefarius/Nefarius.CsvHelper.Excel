@@ -78,9 +78,8 @@ namespace CsvHelper.Excel.Specs.Parser
 
         protected void Run(ExcelParser parser)
         {
-            using var reader = new CsvReader(parser);
+            using var reader = parser.Reader;
 
-            reader.Context.AutoMap<Person>();
             var records = reader.GetRecords<Person>().ToList();
             Results = records.ToArray();
         }
