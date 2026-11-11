@@ -66,6 +66,9 @@ jobs:
         with:
           global-json-file: global.json
 
+      - name: Modify README.md for NuGet
+        run: sed -i 's/# <img[^>]*>/# /' README.md
+
       - name: Pack
         run: dotnet pack src/CsvHelper.Excel/CsvHelper.Excel.csproj -c Release -p:GeneratePackageOnBuild=false --output artifacts
 
