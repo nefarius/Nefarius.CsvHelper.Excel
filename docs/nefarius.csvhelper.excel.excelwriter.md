@@ -2,72 +2,38 @@
 
 Namespace: Nefarius.CsvHelper.Excel
 
-Used to write CSV files.
+Writes CsvHelper records into an Excel workbook when disposed.
 
 ```csharp
-public class ExcelWriter : CsvHelper.CsvWriter, CsvHelper.IWriter, CsvHelper.IWriterRow, System.IDisposable, System.IAsyncDisposable
+public sealed class ExcelWriter : System.IDisposable, System.IAsyncDisposable
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → CsvWriter → [ExcelWriter](./nefarius.csvhelper.excel.excelwriter.md)<br>
-Implements IWriter, IWriterRow, [IDisposable](https://docs.microsoft.com/en-us/dotnet/api/system.idisposable), IAsyncDisposable
+Inheritance [Object](https://learn.microsoft.com/dotnet/api/system.object) → [ExcelWriter](./nefarius.csvhelper.excel.excelwriter.md)<br>
+Implements [IDisposable](https://learn.microsoft.com/dotnet/api/system.idisposable), [IAsyncDisposable](https://learn.microsoft.com/dotnet/api/system.iasyncdisposable)
+
+**Remarks:**
+
+Use [ExcelWriter.Writer](./nefarius.csvhelper.excel.excelwriter.md#writer) to write records. Intermediate CSV is buffered in memory until disposal.
 
 ## Properties
 
-### <a id="properties-configuration"/>**Configuration**
+### <a id="properties-writer"/>**Writer**
+
+Gets the CsvHelper writer used to format fields and records.
 
 ```csharp
-public IWriterConfiguration Configuration { get; }
+public CsvWriter Writer { get; }
 ```
 
 #### Property Value
 
-IWriterConfiguration<br>
-
-### <a id="properties-context"/>**Context**
-
-```csharp
-public CsvContext Context { get; }
-```
-
-#### Property Value
-
-CsvContext<br>
-
-### <a id="properties-headerrecord"/>**HeaderRecord**
-
-```csharp
-public String[] HeaderRecord { get; }
-```
-
-#### Property Value
-
-[String[]](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
-
-### <a id="properties-index"/>**Index**
-
-```csharp
-public int Index { get; }
-```
-
-#### Property Value
-
-[Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>
-
-### <a id="properties-row"/>**Row**
-
-```csharp
-public int Row { get; }
-```
-
-#### Property Value
-
-[Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>
+CsvWriter<br>
 
 ## Constructors
 
 ### <a id="constructors-.ctor"/>**ExcelWriter(String)**
 
-Initializes a new instance of the [ExcelWriter](./nefarius.csvhelper.excel.excelwriter.md) class.
+Creates or overwrites a file with an export worksheet.
 
 ```csharp
 public ExcelWriter(string path)
@@ -75,12 +41,11 @@ public ExcelWriter(string path)
 
 #### Parameters
 
-`path` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
-The path.
+`path` [String](https://learn.microsoft.com/dotnet/api/system.string)<br>
 
 ### <a id="constructors-.ctor"/>**ExcelWriter(String, CultureInfo)**
 
-Initializes a new instance of the [ExcelWriter](./nefarius.csvhelper.excel.excelwriter.md) class.
+Creates or overwrites a file using the specified culture.
 
 ```csharp
 public ExcelWriter(string path, CultureInfo culture)
@@ -88,15 +53,13 @@ public ExcelWriter(string path, CultureInfo culture)
 
 #### Parameters
 
-`path` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
-The path.
+`path` [String](https://learn.microsoft.com/dotnet/api/system.string)<br>
 
-`culture` [CultureInfo](https://docs.microsoft.com/en-us/dotnet/api/system.globalization.cultureinfo)<br>
-The culture.
+`culture` [CultureInfo](https://learn.microsoft.com/dotnet/api/system.globalization.cultureinfo)<br>
 
 ### <a id="constructors-.ctor"/>**ExcelWriter(String, String)**
 
-Initializes a new instance of the [ExcelWriter](./nefarius.csvhelper.excel.excelwriter.md) class.
+Creates or overwrites a file with a named worksheet.
 
 ```csharp
 public ExcelWriter(string path, string sheetName)
@@ -104,15 +67,13 @@ public ExcelWriter(string path, string sheetName)
 
 #### Parameters
 
-`path` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
-The path.
+`path` [String](https://learn.microsoft.com/dotnet/api/system.string)<br>
 
-`sheetName` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
-The sheet name
+`sheetName` [String](https://learn.microsoft.com/dotnet/api/system.string)<br>
 
 ### <a id="constructors-.ctor"/>**ExcelWriter(String, String, CultureInfo)**
 
-Initializes a new instance of the [ExcelWriter](./nefarius.csvhelper.excel.excelwriter.md) class.
+Creates or overwrites a file with a named worksheet and culture.
 
 ```csharp
 public ExcelWriter(string path, string sheetName, CultureInfo culture)
@@ -120,18 +81,31 @@ public ExcelWriter(string path, string sheetName, CultureInfo culture)
 
 #### Parameters
 
-`path` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
-The path.
+`path` [String](https://learn.microsoft.com/dotnet/api/system.string)<br>
 
-`sheetName` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
-The sheet name
+`sheetName` [String](https://learn.microsoft.com/dotnet/api/system.string)<br>
 
-`culture` [CultureInfo](https://docs.microsoft.com/en-us/dotnet/api/system.globalization.cultureinfo)<br>
-The culture.
+`culture` [CultureInfo](https://learn.microsoft.com/dotnet/api/system.globalization.cultureinfo)<br>
+
+### <a id="constructors-.ctor"/>**ExcelWriter(String, String, CsvWriterOptions)**
+
+Creates or overwrites a file using CsvHelper writer options.
+
+```csharp
+public ExcelWriter(string path, string sheetName, CsvWriterOptions options)
+```
+
+#### Parameters
+
+`path` [String](https://learn.microsoft.com/dotnet/api/system.string)<br>
+
+`sheetName` [String](https://learn.microsoft.com/dotnet/api/system.string)<br>
+
+`options` CsvWriterOptions<br>
 
 ### <a id="constructors-.ctor"/>**ExcelWriter(Stream, CultureInfo, Boolean)**
 
-Initializes a new instance of the [ExcelWriter](./nefarius.csvhelper.excel.excelwriter.md) class.
+Writes to a stream using the specified culture. Set leaveOpen to retain stream ownership.
 
 ```csharp
 public ExcelWriter(Stream stream, CultureInfo culture, bool leaveOpen)
@@ -139,19 +113,15 @@ public ExcelWriter(Stream stream, CultureInfo culture, bool leaveOpen)
 
 #### Parameters
 
-`stream` [Stream](https://docs.microsoft.com/en-us/dotnet/api/system.io.stream)<br>
-The stream.
+`stream` [Stream](https://learn.microsoft.com/dotnet/api/system.io.stream)<br>
 
-`culture` [CultureInfo](https://docs.microsoft.com/en-us/dotnet/api/system.globalization.cultureinfo)<br>
-The culture.
+`culture` [CultureInfo](https://learn.microsoft.com/dotnet/api/system.globalization.cultureinfo)<br>
 
-`leaveOpen` [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
-`true` to leave the [TextWriter](https://docs.microsoft.com/en-us/dotnet/api/system.io.textwriter) open after the [ExcelWriter](./nefarius.csvhelper.excel.excelwriter.md)
- object is disposed, otherwise `false`.
+`leaveOpen` [Boolean](https://learn.microsoft.com/dotnet/api/system.boolean)<br>
 
 ### <a id="constructors-.ctor"/>**ExcelWriter(Stream, String, CultureInfo, Boolean)**
 
-Initializes a new instance of the [ExcelWriter](./nefarius.csvhelper.excel.excelwriter.md) class.
+Writes a named worksheet to a stream using the specified culture.
 
 ```csharp
 public ExcelWriter(Stream stream, string sheetName, CultureInfo culture, bool leaveOpen)
@@ -159,71 +129,58 @@ public ExcelWriter(Stream stream, string sheetName, CultureInfo culture, bool le
 
 #### Parameters
 
-`stream` [Stream](https://docs.microsoft.com/en-us/dotnet/api/system.io.stream)<br>
-The stream.
+`stream` [Stream](https://learn.microsoft.com/dotnet/api/system.io.stream)<br>
 
-`sheetName` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
-The sheet name
+`sheetName` [String](https://learn.microsoft.com/dotnet/api/system.string)<br>
 
-`culture` [CultureInfo](https://docs.microsoft.com/en-us/dotnet/api/system.globalization.cultureinfo)<br>
-The culture.
+`culture` [CultureInfo](https://learn.microsoft.com/dotnet/api/system.globalization.cultureinfo)<br>
 
-`leaveOpen` [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
-`true` to leave the [TextWriter](https://docs.microsoft.com/en-us/dotnet/api/system.io.textwriter) open after the [ExcelWriter](./nefarius.csvhelper.excel.excelwriter.md)
- object is disposed, otherwise `false`.
+`leaveOpen` [Boolean](https://learn.microsoft.com/dotnet/api/system.boolean)<br>
+
+### <a id="constructors-.ctor"/>**ExcelWriter(Stream, String, CsvWriterOptions, Boolean)**
+
+Writes a named worksheet to a stream using CsvHelper writer options.
+
+```csharp
+public ExcelWriter(Stream stream, string sheetName, CsvWriterOptions options, bool leaveOpen)
+```
+
+#### Parameters
+
+`stream` [Stream](https://learn.microsoft.com/dotnet/api/system.io.stream)<br>
+
+`sheetName` [String](https://learn.microsoft.com/dotnet/api/system.string)<br>
+
+`options` CsvWriterOptions<br>
+
+`leaveOpen` [Boolean](https://learn.microsoft.com/dotnet/api/system.boolean)<br>
+
+**Remarks:**
+
+CSV dialect options are normalized for the internal transport; formatting and mapping options apply.
 
 ## Methods
 
-### <a id="methods-dispose"/>**Dispose(Boolean)**
+### <a id="methods-dispose"/>**Dispose()**
+
+Finishes the records, saves the workbook and releases owned resources.
 
 ```csharp
-protected void Dispose(bool disposing)
+public void Dispose()
 ```
 
-#### Parameters
+### <a id="methods-disposeasync"/>**DisposeAsync()**
 
-`disposing` [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
-
-### <a id="methods-flush"/>**Flush()**
+Flushes the records asynchronously, saves the workbook and releases owned resources.
 
 ```csharp
-public void Flush()
-```
-
-### <a id="methods-flushasync"/>**FlushAsync()**
-
-```csharp
-public Task FlushAsync()
+public ValueTask DisposeAsync()
 ```
 
 #### Returns
 
-[Task](https://docs.microsoft.com/en-us/dotnet/api/system.threading.tasks.task)
+[ValueTask](https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask)
 
-### <a id="methods-nextrecord"/>**NextRecord()**
+**Remarks:**
 
-```csharp
-public void NextRecord()
-```
-
-### <a id="methods-nextrecordasync"/>**NextRecordAsync()**
-
-```csharp
-public Task NextRecordAsync()
-```
-
-#### Returns
-
-[Task](https://docs.microsoft.com/en-us/dotnet/api/system.threading.tasks.task)
-
-### <a id="methods-writefield"/>**WriteField(String, Boolean)**
-
-```csharp
-public void WriteField(string field, bool shouldQuote)
-```
-
-#### Parameters
-
-`field` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
-
-`shouldQuote` [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
+ClosedXML workbook serialization is synchronous.

@@ -3,7 +3,7 @@
   <PropertyGroup>
     <!-- Copyright information -->
     <Authors>Benjamin Höglinger-Stelzer</Authors>
-    <Copyright>Copyright © Benjamin Höglinger-Stelzer 2022-2025</Copyright>
+    <Copyright>Copyright © Benjamin Höglinger-Stelzer 2022-2026</Copyright>
 
     <!-- Package Icon -->
     <PackageIcon>NSS-128x128.png</PackageIcon>
@@ -11,8 +11,10 @@
     <PackageReadmeFile>README.md</PackageReadmeFile>
 
     <!-- Common solution settings -->
-    <OutputPath>$(SolutionDir)bin\</OutputPath>
+    <RepositoryRoot>$(MSBuildThisFileDirectory)</RepositoryRoot>
+    <OutputPath>$(RepositoryRoot)bin\$(MSBuildProjectName)\$(Configuration)\</OutputPath>
     <LangVersion>latest</LangVersion>
+    <ContinuousIntegrationBuild Condition="'$(CI)' == 'true'">true</ContinuousIntegrationBuild>
 
     <!-- Docs and symbols generation -->
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -23,7 +25,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="$(SolutionDir)assets\NSS-128x128.png" Pack="true" PackagePath="\" />
-    <None Include="$(SolutionDir)README.md" Pack="true" PackagePath="\" />
+    <None Include="$(RepositoryRoot)assets\NSS-128x128.png" Pack="true" PackagePath="\" />
+    <None Include="$(RepositoryRoot)README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 </Project>

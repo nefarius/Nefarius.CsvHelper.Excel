@@ -1,9 +1,10 @@
-﻿
+
 namespace CsvHelper.Excel.Specs.Common
 {
-    public class Person
+    [CsvRecord]
+    public partial class Person
     {
-        public string? Name { get; set; }
+        public string Name { get; set; }
 
         public int? Age { get; set; }
     }

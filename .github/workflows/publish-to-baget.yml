@@ -1,30 +1,41 @@
-name: Publish to Baget
+name: Publish to BaGet
 
 on:
   push:
-    tags:
-      - v*
+    tags: [v*]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: publish-baget-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
+  validate:
+    uses: ./.github/workflows/build.yml
+
   deploy:
+    needs: validate
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Download validated packages
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
-          fetch-depth: 0
+          name: packages
+          path: artifacts
 
-      - name: Setup .Net SDK
-        uses: actions/setup-dotnet@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          dotnet-version: 9.x
+          persist-credentials: false
+          path: source
 
-      - name: Build
-        run: dotnet build -c Release
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@0f4a354dd5547a28c70b7853dbd95d5b67886e73 # v6.1.0
+        with:
+          global-json-file: source/global.json
 
-      - name: Make Nuget Packages
-        run: dotnet pack -c Release
-
-      - name: Publish To Nuget
-        run: dotnet nuget push bin/*.nupkg -k $NUGET_AUTH_TOKEN -s https://baget.nefarius.at/v3/index.json
+      - name: Publish to BaGet
+        run: dotnet nuget push artifacts/*.nupkg --api-key "$BAGET_API_KEY" --source https://baget.nefarius.at/v3/index.json --skip-duplicate
         env:
-          NUGET_AUTH_TOKEN: ${{ secrets.BAGET_API_KEY }}
+          BAGET_API_KEY: ${{ secrets.BAGET_API_KEY }}

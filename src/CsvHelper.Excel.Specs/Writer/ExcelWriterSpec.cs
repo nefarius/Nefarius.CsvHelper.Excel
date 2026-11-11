@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using ClosedXML.Excel;
 using CsvHelper.Excel.Specs.Common;
@@ -48,8 +48,7 @@ namespace CsvHelper.Excel.Specs.Writer
 
         protected void Run(ExcelWriter excelWriter)
         {
-            excelWriter.Context.AutoMap<Person>();
-            excelWriter.WriteRecords(Values);
+            excelWriter.Writer.WriteRecords(Values);
         }
 
         [Fact]

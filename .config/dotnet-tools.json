@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "isRoot": true,
+  "tools": {
+    "nefarius.tools.xmldoc2markdown": {
+      "version": "1.10.0",
+      "commands": ["xmldoc2md"]
+    }
+  }
+}
