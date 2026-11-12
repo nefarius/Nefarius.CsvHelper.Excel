@@ -14,8 +14,6 @@ Read and write Excel workbooks with [CsvHelper](https://github.com/JoshClose/Csv
 dotnet add package Nefarius.CsvHelper.Excel
 ```
 
-The examples require version 34. That version has not been published yet, so this command currently installs version 33.
-
 The package continues to target **.NET Standard 2.0 and 2.1**. Building the repository requires the .NET 10 SDK; running all tests also requires the .NET 8 runtime.
 
 ## Reading
