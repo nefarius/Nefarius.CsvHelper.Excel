@@ -25,7 +25,7 @@
     <ItemGroup>
         <PackageReference Include="ClosedXML" Version="0.105.1" />
         <!-- Record mapping requires CsvHelper's source generator in consuming projects. -->
-        <PackageReference Include="CsvHelper" Version="34.0.0" PrivateAssets="none" />
+        <PackageReference Include="CsvHelper" Version="34.1.0" PrivateAssets="none" />
         <!-- v11 no longer supports .NET 8 consumers. Keep the latest compatible servicing line. -->
         <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="10.0.15" Condition="'$(TargetFramework)' == 'netstandard2.0'" />
         <PackageReference Include="MinVer" Version="8.0.0">
